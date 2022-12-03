@@ -17,8 +17,8 @@ RIGHT_PAREN         = ')'
 MOD_OP              = '%'
 # COMMA               = ','
 SEMICOLON           = ';'
-# LEFT_BRACK          = '['
-# RIGHT_BRACK         = ']'
+LEFT_BRACK          = '{'
+RIGHT_BRACK         = '}'
 # DOT                 = '.'
 LESS_THAN           = '<'
 GREATER_THAN        = '>'
@@ -149,6 +149,12 @@ class Lexer:
                             tokens.append(Token(NOT, None))
                     case ';':
                         tokens.append(Token(SEMICOLON, None))
+                        self.advance()
+                    case '{':
+                        tokens.append(Token(LEFT_BRACK, None))
+                        self.advance()
+                    case '}':
+                        tokens.append(Token(RIGHT_BRACK, None))
                         self.advance()
                     case _:
                         self.advance()
