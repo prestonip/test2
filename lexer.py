@@ -2,7 +2,7 @@
 ###############################################
 
 DIGITS = '0123456789'
-# ALPHAS = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
+ALPHAS = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
 
 INT_LIT             = 'INT_LIT'
 # FLOAT_LIT           = 'FLOAT_LIT'
@@ -61,11 +61,12 @@ class Lexer:
                     self.advance()
                 tokens.append(Token(INT_LIT, int(num_str)))
 
-            # if self.curr_char in ALPHAS:
-            #     self.advance()
-            #     while self.curr_char.isalpha() or self.curr_char in DIGITS:
-            #         self.advance()
-            #     tokens.append(Token(IDENT))
+            elif self.curr_char in ALPHAS:
+                str_str = ""
+                while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS):
+                    str_str += self.curr_char
+                    self.advance()
+                tokens.append(Token(IDENT, None))
             else:    
                 match self.curr_char:
                     case ' ':
