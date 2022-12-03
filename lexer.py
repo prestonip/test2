@@ -1,5 +1,4 @@
-#TOKENS
-###############################################
+####################### TOKENS #######################
 
 DIGITS = '0123456789'
 ALPHAS = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
@@ -26,6 +25,7 @@ LESS_THAN_EQUAL     = 'LESS_THAN_EQUAL'
 GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
 EQUAL_TO            = 'EQUAL_TO'
 NOT_EQUAL_TO        = 'NOT_EQUAL_TO'
+NOT                 = 'NOT'
 
 
 class Token:
@@ -39,11 +39,18 @@ class Token:
         return f'{self.type}'
 
 # class Error:
-#     def error(self):
-#         return
+#     def __init__(self, message):
+#         self.message = message
 
-#LEXER
-###############################################
+#     def to_string(self):
+#         result = f'{self.message}'
+#         return result
+# class IllegalCharacterError(Error):
+#     def __init__(self, details):
+#         super().__init('Illegal Character')
+
+
+####################### LEXER #######################
 
 class Lexer:
     def __init__(self, text):
@@ -121,11 +128,13 @@ class Lexer:
                             tokens.append(Token(NOT_EQUAL_TO, None))
                             self.advance()
                         else:
-                            pass
+                            tokens.append(Token(NOT, None))
                     case _:
                         self.advance()
         return tokens
 
+
+####################### RUNNER #######################
 
 def run(text):
     lexer = Lexer(text)
