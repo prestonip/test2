@@ -1,7 +1,7 @@
 ####################### TOKENS #######################
 
-DIGITS = '0123456789'
-ALPHAS = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
+DIGITS              = '0123456789'
+ALPHAS              = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
 
 INT_LIT             = 'INT_LIT'
 # FLOAT_LIT           = 'FLOAT_LIT'
@@ -26,6 +26,11 @@ GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
 EQUAL_TO            = 'EQUAL_TO'
 NOT_EQUAL_TO        = 'NOT_EQUAL_TO'
 NOT                 = 'NOT'
+
+CHECK_STMT          = 'CHECK_STMT' # if keyword
+START_STMT          = 'START_STMT' # while keyword
+GIVEN_STMT          = 'GIVEN_STMT' # for keyword
+
 
 
 class Token:
@@ -67,18 +72,30 @@ class Lexer:
         tokens = []
 
         while self.curr_char != None:
+            # integer literal conditions
             if self.curr_char in DIGITS:
                 num_str = ""
                 while self.curr_char != None and self.curr_char in DIGITS:
                     num_str += self.curr_char
                     self.advance()
                 tokens.append(Token(INT_LIT, int(num_str)))
+
+            # identifier and keyword conditions
             elif self.curr_char in ALPHAS:
                 str_str = ""
                 while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS):
                     str_str += self.curr_char
                     self.advance()
-                tokens.append(Token(IDENT, None))
+                if str_str == "check":
+                    tokens.append(Token(CHECK_STMT, None))
+                elif str_str == "start":
+                    tokens.append(Token(START_STMT, None))
+                elif str_str == "given":
+                    tokens.append(Token(GIVEN_STMT, None))
+                else:
+                    tokens.append(Token(IDENT, None))
+
+            # all other tokens conditions
             else:    
                 match self.curr_char:
                     case ' ':
