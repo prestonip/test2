@@ -21,17 +21,18 @@ MOD_OP              = 'MOD_OP'
 # DOT                 = 'DOT'
 LESS_THAN           = 'LESS_THAN'
 GREATER_THAN        = 'GREATER_THAN'
-# LESS_THAN_EQUAL     = 'LESS_THAN_EQUAL'
-# GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
+LESS_THAN_EQUAL     = 'LESS_THAN_EQUAL'
+GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
 
 
 class Token:
-    def __init__(self, type_):
+    def __init__(self, type_, value):
         self.type = type_
+        self.value = value
 
     def __repr__(self):
-        # if self.value: 
-        #     return f'{self.type}:{self.value}'
+        if self.value: 
+            return f'{self.type}: {self.value}'
         return f'{self.type}'
 
 #LEXER
@@ -75,36 +76,36 @@ class Lexer:
                     case '\t':
                         self.advance()
                     case '+':
-                        tokens.append(Token(ADD_OP))
+                        tokens.append(Token(ADD_OP, None))
                         self.advance()
                     case '-':
-                        tokens.append(Token(SUB_OP))
+                        tokens.append(Token(SUB_OP, None))
                         self.advance()
                     case '*':
-                        tokens.append(Token(MULT_OP))
+                        tokens.append(Token(MULT_OP, None))
                         self.advance()
                     case '/':
-                        tokens.append(Token(DIV_OP))
+                        tokens.append(Token(DIV_OP, None))
                         self.advance()
                     case '%':
-                        tokens.append(Token(MOD_OP))
+                        tokens.append(Token(MOD_OP, None))
                         self.advance()
                     case '<':
-                        # if self.next_char == '=':
-                        #     tokens.append(Token(LESS_THAN_EQUAL))
-                        #     self.advance()
-                        #     self.advance()
-                        # else:
-                        tokens.append(Token(LESS_THAN))
                         self.advance()
+                        if self.curr_char == '=':
+                            tokens.append(Token(LESS_THAN_EQUAL, None))
+                            self.advance()
+                        else:
+                            tokens.append(Token(LESS_THAN, None))
+                            self.advance()
                     case '>':
-                        # if self.next_char == '=':
-                        #     tokens.append(Token(GREATER_THAN_EQUAL))
-                        #     self.advance()
-                        #     self.advance()
-                        # else:
-                        tokens.append(Token(GREATER_THAN))
                         self.advance()
+                        if self.curr_char == '=':
+                            tokens.append(Token(GREATER_THAN_EQUAL, None))
+                            self.advance()
+                        else:
+                            tokens.append(Token(GREATER_THAN, None))
+                            self.advance()
                     # case '!':
                     #     if self.next_char == '=':
                     #         tokens.append(Token(GREATER_THAN_EQUAL))
@@ -125,11 +126,10 @@ class Lexer:
 
     def numberize(self):
         num_str = ""
-
         while self.curr_char != None and self.curr_char in DIGITS:
             num_str += self.curr_char
             self.advance()
-        return Token(INT_LIT)
+        return Token(INT_LIT, int(num_str))
 
 
 def run(text):
