@@ -26,7 +26,7 @@ LESS_THAN_EQUAL     = '<='
 GREATER_THAN_EQUAL  = '>='
 EQUAL_TO            = '=='
 NOT_EQUAL_TO        = '!='
-NOT                 = '!'
+# NOT                 = '!'
 
 CHECK               = 'CHECK' # if keyword
 CASH                = 'CASH'  # else keyword
@@ -149,7 +149,7 @@ class Lexer:
                             tokens.append(Token(NOT_EQUAL_TO, None))
                             self.advance()
                         else:
-                            tokens.append(Token(NOT, None))
+                            return self.error(self.curr_char)
                     case ';':
                         tokens.append(Token(SEMICOLON, None))
                         self.advance()
@@ -160,8 +160,13 @@ class Lexer:
                         tokens.append(Token(RIGHT_BRACK, None))
                         self.advance()
                     case _:
-                        self.advance()
+                        return self.error(self.curr_char)
         return tokens
+        
+    def error(self, invalid_char):
+        self.invalid_char = invalid_char
+        return f'Illegal Character: {invalid_char}'
+
 
 
 ####################### RUNNER #######################
