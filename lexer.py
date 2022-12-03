@@ -2,6 +2,7 @@
 ###############################################
 
 DIGITS = '0123456789'
+# ALPHAS = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
 
 INT_LIT             = 'INT_LIT'
 # FLOAT_LIT           = 'FLOAT_LIT'
@@ -14,7 +15,7 @@ DIV_OP              = 'DIV_OP'
 LEFT_PAREN          = 'LEFT_PAREN'
 RIGHT_PAREN         = 'RIGHT_PAREN'
 MOD_OP              = 'MOD_OP'
-# COMMA               = 'COMMA'd
+# COMMA               = 'COMMA'
 # SEMICOLON           = 'SEMICOLON'
 # LEFT_BRACK          = 'LEFT_BRACK'
 # RIGHT_BRACK         = 'RIGHT_BRACK'
@@ -42,19 +43,11 @@ class Lexer:
     def __init__(self, text):
         self.text = text
         self.pos = -1
-        # self.next_pos = 0
         self.curr_char = None
-        # self.next_char = None
         self.advance()
     
     def advance(self):
         self.pos += 1
-        # self.next_pos += 1
-        # if self.next_pos < (len(self.text) + 1):
-        #     self.next_char = self.text[self.next_pos] 
-        # else:
-        #     None
-
         self.curr_char = self.text[self.pos] if self.pos < len(self.text) else None
 
     def tokenize(self):
@@ -62,9 +55,13 @@ class Lexer:
 
         while self.curr_char != None:
             if self.curr_char in DIGITS:
-                tokens.append(self.numberize())
+                num_str = ""
+                while self.curr_char != None and self.curr_char in DIGITS:
+                    num_str += self.curr_char
+                    self.advance()
+                tokens.append(Token(INT_LIT, int(num_str)))
 
-            # if self.curr_char.isalpha():
+            # if self.curr_char in ALPHAS:
             #     self.advance()
             #     while self.curr_char.isalpha() or self.curr_char in DIGITS:
             #         self.advance()
@@ -123,13 +120,6 @@ class Lexer:
 
 
         return tokens
-
-    def numberize(self):
-        num_str = ""
-        while self.curr_char != None and self.curr_char in DIGITS:
-            num_str += self.curr_char
-            self.advance()
-        return Token(INT_LIT, int(num_str))
 
 
 def run(text):
