@@ -6,30 +6,31 @@ ALPHAS              = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
 INT_LIT             = 'INT_LIT'
 # FLOAT_LIT           = 'FLOAT_LIT'
 IDENT               = 'IDENT'
-ASSIGN_OP           = 'ASSIGN_OP'
-ADD_OP              = 'ADD_OP'
-SUB_OP              = 'SUB_OP'
-MULT_OP             = 'MULT_OP'
-DIV_OP              = 'DIV_OP'
-LEFT_PAREN          = 'LEFT_PAREN'
-RIGHT_PAREN         = 'RIGHT_PAREN'
-MOD_OP              = 'MOD_OP'
-# COMMA               = 'COMMA'
-# SEMICOLON           = 'SEMICOLON'
-# LEFT_BRACK          = 'LEFT_BRACK'
-# RIGHT_BRACK         = 'RIGHT_BRACK'
-# DOT                 = 'DOT'
-LESS_THAN           = 'LESS_THAN'
-GREATER_THAN        = 'GREATER_THAN'
-LESS_THAN_EQUAL     = 'LESS_THAN_EQUAL'
-GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
-EQUAL_TO            = 'EQUAL_TO'
-NOT_EQUAL_TO        = 'NOT_EQUAL_TO'
-NOT                 = 'NOT'
 
-CHECK_STMT          = 'CHECK_STMT' # if keyword
-START_STMT          = 'START_STMT' # while keyword
-GIVEN_STMT          = 'GIVEN_STMT' # for keyword
+ASSIGN_OP           = '='
+ADD_OP              = '+'
+SUB_OP              = '-'
+MULT_OP             = '*'
+DIV_OP              = '/'
+LEFT_PAREN          = '('
+RIGHT_PAREN         = ')'
+MOD_OP              = '%'
+# COMMA               = ','
+SEMICOLON           = ';'
+# LEFT_BRACK          = '['
+# RIGHT_BRACK         = ']'
+# DOT                 = '.'
+LESS_THAN           = '<'
+GREATER_THAN        = '>'
+LESS_THAN_EQUAL     = '<='
+GREATER_THAN_EQUAL  = '>='
+EQUAL_TO            = '=='
+NOT_EQUAL_TO        = '!='
+NOT                 = '!'
+
+CHECK               = 'CHECK' # if keyword
+START               = 'START' # while keyword
+GIVEN               = 'GIVEN' # for keyword
 
 
 
@@ -87,11 +88,11 @@ class Lexer:
                     str_str += self.curr_char
                     self.advance()
                 if str_str == "check":
-                    tokens.append(Token(CHECK_STMT, None))
+                    tokens.append(Token(CHECK, None))
                 elif str_str == "start":
-                    tokens.append(Token(START_STMT, None))
+                    tokens.append(Token(START, None))
                 elif str_str == "given":
-                    tokens.append(Token(GIVEN_STMT, None))
+                    tokens.append(Token(GIVEN, None))
                 else:
                     tokens.append(Token(IDENT, None))
 
@@ -146,6 +147,9 @@ class Lexer:
                             self.advance()
                         else:
                             tokens.append(Token(NOT, None))
+                    case ';':
+                        tokens.append(Token(SEMICOLON, None))
+                        self.advance()
                     case _:
                         self.advance()
         return tokens
