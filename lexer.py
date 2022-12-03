@@ -29,6 +29,7 @@ NOT_EQUAL_TO        = '!='
 NOT                 = '!'
 
 CHECK               = 'CHECK' # if keyword
+CASH                = 'CASH'  # else keyword
 START               = 'START' # while keyword
 GIVEN               = 'GIVEN' # for keyword
 
@@ -89,6 +90,8 @@ class Lexer:
                     self.advance()
                 if str_str == "check":
                     tokens.append(Token(CHECK, None))
+                elif str_str == "cash":
+                    tokens.append(Token(CASH, None))
                 elif str_str == "start":
                     tokens.append(Token(START, None))
                 elif str_str == "given":
