@@ -24,6 +24,8 @@ LESS_THAN           = 'LESS_THAN'
 GREATER_THAN        = 'GREATER_THAN'
 LESS_THAN_EQUAL     = 'LESS_THAN_EQUAL'
 GREATER_THAN_EQUAL  = 'GREATER_THAN_EQUAL'
+EQUAL_TO            = 'EQUAL_TO'
+NOT_EQUAL_TO        = 'NOT_EQUAL_TO'
 
 
 class Token:
@@ -35,6 +37,10 @@ class Token:
         if self.value: 
             return f'{self.type}: {self.value}'
         return f'{self.type}'
+
+# class Error:
+#     def error(self):
+#         return
 
 #LEXER
 ###############################################
@@ -60,7 +66,6 @@ class Lexer:
                     num_str += self.curr_char
                     self.advance()
                 tokens.append(Token(INT_LIT, int(num_str)))
-
             elif self.curr_char in ALPHAS:
                 str_str = ""
                 while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS):
@@ -95,7 +100,6 @@ class Lexer:
                             self.advance()
                         else:
                             tokens.append(Token(LESS_THAN, None))
-                            self.advance()
                     case '>':
                         self.advance()
                         if self.curr_char == '=':
@@ -103,23 +107,23 @@ class Lexer:
                             self.advance()
                         else:
                             tokens.append(Token(GREATER_THAN, None))
+
+                    case '=':
+                        self.advance()
+                        if self.curr_char == '=':
+                            tokens.append(Token(EQUAL_TO, None))
                             self.advance()
-                    # case '!':
-                    #     if self.next_char == '=':
-                    #         tokens.append(Token(GREATER_THAN_EQUAL))
-                    #         self.advance()
-                    #         self.advance()
-                    #     else:
-                    #         pass # <-- add code to handle '!' as an error
+                        else:
+                            tokens.append(Token(ASSIGN_OP, None))
+                    case '!':
+                        self.advance()
+                        if self.curr_char == '=':
+                            tokens.append(Token(NOT_EQUAL_TO, None))
+                            self.advance()
+                        else:
+                            pass
                     case _:
                         self.advance()
-
-                        
-
-
-
-
-
         return tokens
 
 
