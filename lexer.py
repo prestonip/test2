@@ -45,17 +45,17 @@ class Token:
             return f'{self.type}: {self.value}'
         return f'{self.type}'
 
-# class Error:
-#     def __init__(self, message):
-#         self.message = message
+class Error:
+    def __init__(self, error_name):
+        self.error_name = error_name
 
-#     def to_string(self):
-#         result = f'{self.message}'
-#         return result
-# class IllegalCharacterError(Error):
-#     def __init__(self, details):
-#         super().__init('Illegal Character')
+    def to_string(self):
+        result = f'{self.error_name}: {self.details}'
+        return result
 
+class IllegalCharError(Error):
+    def __init__(self):
+        super().__init__('Illegal Character')
 
 ####################### LEXER #######################
 
@@ -160,12 +160,9 @@ class Lexer:
                         tokens.append(Token(RIGHT_BRACK, None))
                         self.advance()
                     case _:
-                        return self.error(self.curr_char)
+                        return IllegalCharError()
         return tokens
         
-    def error(self, invalid_char):
-        self.invalid_char = invalid_char
-        return f'Illegal Character: {invalid_char}'
 
 
 
