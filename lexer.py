@@ -28,6 +28,11 @@ EQUAL_TO            = '=='
 NOT_EQUAL_TO        = '!='
 # NOT                 = '!'
 
+YOINKY              = 'YOINKY' # start of program
+SPLOINKY            = 'SPLOINKY' #end of program
+
+NOCAP               = 'NOCAP' # true boolean keyword
+CAP                 = 'CAP' # false keyword
 CHECK               = 'CHECK' # if keyword
 CASH                = 'CASH'  # else keyword
 START               = 'START' # while keyword
@@ -96,6 +101,14 @@ class Lexer:
                     tokens.append(Token(START, None))
                 elif str_str == "given":
                     tokens.append(Token(GIVEN, None))
+                elif str_str == "NOCAP":
+                    tokens.append(Token(NOCAP, None))
+                elif str_str == "CAP":
+                    tokens.append(Token(CAP, None))
+                elif str_str == "YOINKY":
+                    tokens.append(Token(YOINKY, None))
+                elif str_str == "SPLOINKY":
+                    tokens.append(Token(SPLOINKY, None))
                 else:
                     tokens.append(Token(IDENT, None))
 
