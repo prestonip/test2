@@ -61,20 +61,23 @@ class Token:
 
 
 class Error:
-    def __init__(self, start, end, error_name, details):
-        self.start = start
-        self.end = end
+    def __init__(self, err_start, err_end, error_name, details):
+        self.err_start = err_start
+        self.err_end = err_end
         self.error_name = error_name
         self.details = details
 
     def to_string(self):
-        result = f'{self.error_name}: {self.details} '
-        result += f'in {self.start.filename}, line {self.start.length +1}'
+        result = f'{self.error_name}: {self.details} in {self.err_start.filename}, line {self.err_start.length +1}'
         return result
 
 class IllegalCharError(Error):
-    def __init__(self, start, end, details):
-        super().__init__(start, end, 'Illegal Character', details)
+    def __init__(self, err_start, err_end, details):
+        super().__init__(err_start, err_end, 'Illegal Character', details)
+
+class IllegalVarLenError(Error):
+    def __init__(self, err_start, err_end, details):
+        super().__init__(err_start, err_end, 'Illegal Variable Length', details)
 
 class SyntaxError(Error):
     def __init__(self, details):
@@ -144,6 +147,11 @@ class Lexer:
                 while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS): 
                     str_str += self.curr_char 
                     self.advance()
+                if len(str_str) > 8 or len(str_str) < 6:
+                    self.err_start = self.position.copy()
+                    char = self.curr_char
+                    self.advance()
+                    return [], IllegalVarLenError(self.err_start, self.position, '"str_str"')
                 if str_str == "check": tokens.append(Token(CHECK, None))
                 elif str_str == "cash": tokens.append(Token(CASH, None))
                 elif str_str == "start": tokens.append(Token(START, None))
@@ -203,10 +211,10 @@ class Lexer:
                         tokens.append(Token(RIGHT_BRACK, None))
                         self.advance()
                     case _:
-                        self.start = self.position.copy()
+                        self.err_start = self.position.copy()
                         char = self.curr_char
                         self.advance()
-                        return [], IllegalCharError(self.start, self.position, char)
+                        return [], IllegalCharError(self.err_start, self.position, char)
         return tokens, None
 
 
