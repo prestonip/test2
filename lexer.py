@@ -2,8 +2,12 @@
 
 DIGITS              = '0123456789'
 ALPHAS              = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
+INT_LIT               = 'INT_LIT'
+INT_LIT_1             = 'INT_LIT_1'
+INT_LIT_2             = 'INT_LIT_2'
+INT_LIT_4             = 'INT_LIT_4'
+INT_LIT_8             = 'INT_LIT_8'
 
-INT_LIT             = 'INT_LIT'
 # FLOAT_LIT           = 'FLOAT_LIT'
 IDENT               = 'IDENT'
 
@@ -28,6 +32,8 @@ EQUAL_TO            = '=='
 NOT_EQUAL_TO        = '!='
 # NOT                 = '!'
 
+NEW_LINE            = "NEW_LINE"
+
 YOINKY              = 'YOINKY' # start of program
 SPLOINKY            = 'SPLOINKY' #end of program
 
@@ -41,7 +47,7 @@ GIVEN               = 'GIVEN' # for keyword
 
 
 class Token:
-    def __init__(self, type_, value):
+    def __init__(self, type_, value = None):
         self.type = type_
         self.value = value
 
@@ -50,91 +56,116 @@ class Token:
             return f'{self.type}: {self.value}'
         return f'{self.type}'
 
+
+####################### ERRORS #######################
+
+
 class Error:
-    def __init__(self, error_name):
+    def __init__(self, start, end, error_name, details):
+        self.start = start
+        self.end = end
         self.error_name = error_name
+        self.details = details
 
     def to_string(self):
-        result = f'{self.error_name}: {self.details}'
+        result = f'{self.error_name}: {self.details} '
+        result += f'in {self.start.filename}, line {self.start.length +1}'
         return result
 
 class IllegalCharError(Error):
-    def __init__(self):
-        super().__init__('Illegal Character')
+    def __init__(self, start, end, details):
+        super().__init__(start, end, 'Illegal Character', details)
+
+class SyntaxError(Error):
+    def __init__(self, details):
+        super().__init__('Illegal Syntax', details)
+
+
+####################### POSITION #######################
+
+class Position:
+    def __init__(self, index, length, column, filename, text):
+        self.index = index
+        self.length = length
+        self.column = column
+        self.filename = filename
+        self.text = text
+    
+    def advance(self, curr_char):
+        self.index += 1
+        self.column += 1
+
+        if curr_char == '\n':
+            self.length += 1
+            self.column += 0
+
+        return self
+
+    def copy(self):
+        return Position(self.index, self.length, self.column, self.filename, self.text)
+
+
 
 ####################### LEXER #######################
 
 class Lexer:
-    def __init__(self, text):
+    def __init__(self, filename, text):
+        self.filename = filename
         self.text = text
-        self.pos = -1
+        self.position = Position(-1, 0, -1, filename, text)
         self.curr_char = None
         self.advance()
     
     def advance(self):
-        self.pos += 1
-        self.curr_char = self.text[self.pos] if self.pos < len(self.text) else None
+        self.position.advance(self.curr_char)
+        self.curr_char = self.text[self.position.index] if self.position.index < len(self.text) else None
 
     def tokenize(self):
         tokens = []
 
         while self.curr_char != None:
             # integer literal conditions
-            if self.curr_char in DIGITS:
+            if self.curr_char.isnumeric(): 
                 num_str = ""
                 while self.curr_char != None and self.curr_char in DIGITS:
                     num_str += self.curr_char
                     self.advance()
-                tokens.append(Token(INT_LIT, int(num_str)))
+                if self.curr_char == '_':
+                    self.advance()
+                    if self.curr_char == '1': tokens.append(Token(INT_LIT_1, int(num_str)))
+                    elif self.curr_char == '2': tokens.append(Token(INT_LIT_2, int(num_str)))
+                    elif self.curr_char == '4': tokens.append(Token(INT_LIT_4, int(num_str)))
+                    elif self.curr_char == '8': tokens.append(Token(INT_LIT_8, int(num_str)))
+                else: tokens.append(Token(INT_LIT, int(num_str)))
 
             # identifier and keyword conditions
-            elif self.curr_char in ALPHAS:
+            elif self.curr_char.isalpha():
                 str_str = ""
-                while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS):
-                    str_str += self.curr_char
+                while self.curr_char != None and (self.curr_char in ALPHAS or self.curr_char in DIGITS): 
+                    str_str += self.curr_char 
                     self.advance()
-                if str_str == "check":
-                    tokens.append(Token(CHECK, None))
-                elif str_str == "cash":
-                    tokens.append(Token(CASH, None))
-                elif str_str == "start":
-                    tokens.append(Token(START, None))
-                elif str_str == "given":
-                    tokens.append(Token(GIVEN, None))
-                elif str_str == "NOCAP":
-                    tokens.append(Token(NOCAP, None))
-                elif str_str == "CAP":
-                    tokens.append(Token(CAP, None))
-                elif str_str == "YOINKY":
-                    tokens.append(Token(YOINKY, None))
-                elif str_str == "SPLOINKY":
-                    tokens.append(Token(SPLOINKY, None))
-                else:
-                    tokens.append(Token(IDENT, None))
+                if str_str == "check": tokens.append(Token(CHECK, None))
+                elif str_str == "cash": tokens.append(Token(CASH, None))
+                elif str_str == "start": tokens.append(Token(START, None))
+                elif str_str == "given": tokens.append(Token(GIVEN, None))
+                elif str_str == "NOCAP": tokens.append(Token(NOCAP, None))
+                elif str_str == "CAP": tokens.append(Token(CAP, None))
+                elif str_str == "YOINKY": tokens.append(Token(YOINKY, None))
+                elif str_str == "SPLOINKY": tokens.append(Token(SPLOINKY, None))
+                else: tokens.append(Token(IDENT, None))
 
             # all other tokens conditions
             else:    
                 match self.curr_char:
-                    case ' ':
-                        self.advance()
-                    case '\t':
-                        self.advance()
-                    case '+':
-                        tokens.append(Token(ADD_OP, None))
-                        self.advance()
-                    case '-':
-                        tokens.append(Token(SUB_OP, None))
-                        self.advance()
-                    case '*':
-                        tokens.append(Token(MULT_OP, None))
-                        self.advance()
-                    case '/':
-                        tokens.append(Token(DIV_OP, None))
-                        self.advance()
-                    case '%':
-                        tokens.append(Token(MOD_OP, None))
-                        self.advance()
-                    case '<':
+                    case ' ':   self.advance()
+                    case '\t':  self.advance()
+                    case '\n':  tokens.append(Token(NEW_LINE, None)), self.advance()
+                    case '+':   tokens.append(Token(ADD_OP, None)), self.advance()
+                    case '-':   tokens.append(Token(SUB_OP, None)), self.advance()
+                    case '*':   tokens.append(Token(MULT_OP, None)), self.advance()
+                    case '/':   tokens.append(Token(DIV_OP, None)), self.advance()
+                    case '%':   tokens.append(Token(MOD_OP, None)), self.advance()
+                    case '<':   
                         self.advance()
                         if self.curr_char == '=':
                             tokens.append(Token(LESS_THAN_EQUAL, None))
@@ -148,7 +179,6 @@ class Lexer:
                             self.advance()
                         else:
                             tokens.append(Token(GREATER_THAN, None))
-
                     case '=':
                         self.advance()
                         if self.curr_char == '=':
@@ -173,15 +203,19 @@ class Lexer:
                         tokens.append(Token(RIGHT_BRACK, None))
                         self.advance()
                     case _:
-                        return IllegalCharError()
-        return tokens
-        
-
+                        self.start = self.position.copy()
+                        char = self.curr_char
+                        self.advance()
+                        return [], IllegalCharError(self.start, self.position, char)
+        return tokens, None
 
 
 ####################### RUNNER #######################
 
-def run(text):
-    lexer = Lexer(text)
-    tokens = lexer.tokenize()
-    return tokens
+def run(filename, text):
+    lexer = Lexer(filename, text)
+    tokens, error = lexer.tokenize()
+    return tokens, error
+
+
+    
