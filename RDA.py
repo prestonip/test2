@@ -1,10 +1,10 @@
 '''
 S --> 'YOINKY' <stmt> 'SPLOINKY'
 <stmt> --> <var_stmt> | <select_stmt> | <loop_stmt> | <block>
-<var_stmt> --> 'id' { `=` <expr> }
+<var_stmt> --> 'id' { '=' <expr> }
 <select_stmt> -->  'maybe' '(' <bool_expr> ')' <stmt> [ 'else' <stmt> ]
 <loop> -->  'loop' '(' <bool_expr> ')' <stmt> 
-<block> --> '{' { <stmt>';' } '}'
+<block> --> '{' { <stmt> } '}'
 
 
 <expr> --> <term> { ('+'|'-') <term> }
@@ -162,12 +162,16 @@ class Parser:
             self.syntaxError('bool factor')
 
     
-    # <block> --> '{' { <stmt> } '}'
+    # <block> --> '{' { <stmt> ';' } '}'
     def block(self):
         if self.curr_token == '{':
             self.advance()
             while self.curr_token == 'MAYBE' or self.curr_token == 'LOOP' or self.curr_token == 'IDENT' or self.curr_token == '{':
                 self.stmt()
+                if self.curr_token == ';':
+                    self.advance()
+                else:
+                    self.syntaxError('block')
             if self.curr_token == '}':
                 self.advance()
             else:

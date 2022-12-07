@@ -20,7 +20,7 @@ LEFT_PAREN          = '('
 RIGHT_PAREN         = ')'
 MOD_OP              = '%'
 # COMMA               = ','
-# SEMICOLON           = ';'
+SEMICOLON           = ';'
 LEFT_BRACK          = '{'
 RIGHT_BRACK         = '}'
 # DOT                 = '.'
@@ -148,9 +148,9 @@ class Lexer:
                             self.advance()
                         else:
                             return self.lexError(self.curr_char)
-                    # case ';':
-                    #     tokens.append(';')
-                    #     self.advance()
+                    case ';':
+                        tokens.append(';')
+                        self.advance()
                     case '{':
                         tokens.append('{')
                         self.advance()
