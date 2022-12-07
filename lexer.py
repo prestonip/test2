@@ -39,6 +39,11 @@ SPLOINKY            = 'SPLOINKY' #end of program
 
 NOCAP               = 'NOCAP' # true boolean keyword
 CAP                 = 'CAP' # false keyword
+AND                 = 'AND'
+OR                  = 'OR'
+
+
+
 MAYBE               = 'MAYBE' # if keyword
 ACTUALLY            = 'ACTUALLY'  # else keyword
 LOOP                = 'LOOP' # loop keyword
@@ -156,6 +161,8 @@ class Lexer:
                 elif str_str == "loop":     tokens.append(Token(LOOP, None))
                 elif str_str == "nocap":    tokens.append(Token(NOCAP, None))
                 elif str_str == "cap":      tokens.append(Token(CAP, None))
+                elif str_str == "and":      tokens.append(Token(AND, None))
+                elif str_str == "or":       tokens.append(Token(OR, None))
                 elif str_str == "YOINKY":   tokens.append(Token(YOINKY, None))
                 elif str_str == "SPLOINKY": tokens.append(Token(SPLOINKY, None))
                 else:                       tokens.append(Token(IDENT, None))
@@ -217,6 +224,8 @@ class Lexer:
                         self.advance()
                         return [], IllegalCharError(self.err_start, self.position, char)
         return tokens, None
+
+
 
 
 ####################### RUNNER #######################
