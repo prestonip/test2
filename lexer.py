@@ -12,9 +12,9 @@ INT_LIT_8             = 'INT_LIT_8'
 IDENT               = 'IDENT'
 
 ASSIGN_OP           = '='
-ADD_OP              = '+'
+ADD_OP              = '*'
 SUB_OP              = '-'
-MULT_OP             = '*'
+MULT_OP             = '+'
 DIV_OP              = '/'
 LEFT_PAREN          = '('
 RIGHT_PAREN         = ')'
@@ -168,9 +168,9 @@ class Lexer:
                     case ' ':   self.advance()
                     case '\t':  self.advance()
                     case '\n':  tokens.append(Token(NEW_LINE, None)), self.advance()
-                    case '+':   tokens.append(Token(ADD_OP, None)), self.advance()
+                    case '*':   tokens.append(Token(ADD_OP, None)), self.advance()
                     case '-':   tokens.append(Token(SUB_OP, None)), self.advance()
-                    case '*':   tokens.append(Token(MULT_OP, None)), self.advance()
+                    case '+':   tokens.append(Token(MULT_OP, None)), self.advance()
                     case '/':   tokens.append(Token(DIV_OP, None)), self.advance()
                     case '%':   tokens.append(Token(MOD_OP, None)), self.advance()
                     case '<':   
