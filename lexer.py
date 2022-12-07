@@ -165,7 +165,7 @@ class Lexer:
                 match self.curr_char:
                     case ' ':   self.advance()
                     case '\t':  self.advance()
-                    case '\n':  tokens.append(Token(NEW_LINE, None)), self.advance()
+                    case '\n':  self.advance()
                     case '*':   tokens.append(Token(ADD_OP, None)), self.advance()
                     case '-':   tokens.append(Token(SUB_OP, None)), self.advance()
                     case '+':   tokens.append(Token(MULT_OP, None)), self.advance()
