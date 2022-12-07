@@ -39,10 +39,9 @@ SPLOINKY            = 'SPLOINKY' #end of program
 
 NOCAP               = 'NOCAP' # true boolean keyword
 CAP                 = 'CAP' # false keyword
-CHECK               = 'CHECK' # if keyword
-CASH                = 'CASH'  # else keyword
-START               = 'START' # while keyword
-GIVEN               = 'GIVEN' # for keyword
+MAYBE               = 'MAYBE' # if keyword
+ACTUALLY            = 'ACTUALLY'  # else keyword
+LOOP                = 'LOOP' # loop keyword
 
 
 
@@ -135,7 +134,7 @@ class Lexer:
                     self.advance()
                 if self.curr_char == '_':
                     self.advance()
-                    if self.curr_char == '1': tokens.append(Token(INT_LIT_1, int(num_str)))
+                    if self.curr_char == '1':   tokens.append(Token(INT_LIT_1, int(num_str)))
                     elif self.curr_char == '2': tokens.append(Token(INT_LIT_2, int(num_str)))
                     elif self.curr_char == '4': tokens.append(Token(INT_LIT_4, int(num_str)))
                     elif self.curr_char == '8': tokens.append(Token(INT_LIT_8, int(num_str)))
@@ -152,15 +151,14 @@ class Lexer:
                     char = self.curr_char
                     self.advance()
                     return [], IllegalVarLenError(self.err_start, self.position, '"str_str"')
-                if str_str == "check": tokens.append(Token(CHECK, None))
-                elif str_str == "cash": tokens.append(Token(CASH, None))
-                elif str_str == "start": tokens.append(Token(START, None))
-                elif str_str == "given": tokens.append(Token(GIVEN, None))
-                elif str_str == "NOCAP": tokens.append(Token(NOCAP, None))
-                elif str_str == "CAP": tokens.append(Token(CAP, None))
-                elif str_str == "YOINKY": tokens.append(Token(YOINKY, None))
+                if str_str == "maybe":      tokens.append(Token(MAYBE, None))
+                elif str_str == "actually": tokens.append(Token(ACTUALLY, None))
+                elif str_str == "loop":     tokens.append(Token(LOOP, None))
+                elif str_str == "nocap":    tokens.append(Token(NOCAP, None))
+                elif str_str == "cap":      tokens.append(Token(CAP, None))
+                elif str_str == "YOINKY":   tokens.append(Token(YOINKY, None))
                 elif str_str == "SPLOINKY": tokens.append(Token(SPLOINKY, None))
-                else: tokens.append(Token(IDENT, None))
+                else:                       tokens.append(Token(IDENT, None))
 
             # all other tokens conditions
             else:    
@@ -200,7 +198,10 @@ class Lexer:
                             tokens.append(Token(NOT_EQUAL_TO, None))
                             self.advance()
                         else:
-                            return self.error(self.curr_char)
+                            self.err_start = self.position.copy()
+                            char = self.curr_char
+                            self.advance()
+                            return [], IllegalCharError(self.err_start, self.position, char)
                     case ';':
                         tokens.append(Token(SEMICOLON, None))
                         self.advance()
